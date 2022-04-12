@@ -598,6 +598,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HouseBig02 (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 100034, guid: 1134317543a4d0949af5a6b78ad8e9c7, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 400034, guid: 1134317543a4d0949af5a6b78ad8e9c7, type: 3}
       propertyPath: m_RootOrder
       value: 21
@@ -1272,6 +1276,7 @@ GameObject:
   - component: {fileID: 1240868367}
   - component: {fileID: 1240868366}
   - component: {fileID: 1240868369}
+  - component: {fileID: 1240868370}
   m_Layer: 0
   m_Name: SpawnPosition
   m_TagString: Untagged
@@ -1336,7 +1341,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1240868365}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 365.5, y: 2.23, z: 471.46}
+  m_LocalPosition: {x: 365.5, y: 2.33, z: 471.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1358,6 +1363,20 @@ MonoBehaviour:
   - {fileID: 8649283112028866171, guid: 7912ec467aa9147a59e49b3925ad126e, type: 3}
   number: 10
   spawnRadius: 10
+  spawnOnStart: 1
+--- !u!135 &1240868370
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1240868365}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 10
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &1312657415
 PrefabInstance:
   m_ObjectHideFlags: 0

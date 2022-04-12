@@ -68,7 +68,11 @@ public class ZombieController : MonoBehaviour
             anim.SetBool("isDead", true);
         }*/
 
-
+        if (target == null)
+        {
+            target = GameObject.FindGameObjectWithTag("Player");
+            return;
+        }
         switch (state)
         {
             case STATE.IDLE:
