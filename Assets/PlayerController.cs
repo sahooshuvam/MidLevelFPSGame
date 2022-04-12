@@ -95,7 +95,8 @@ public class PlayerController : MonoBehaviour
         playerRotation = Quaternion.Euler(0f, mouseX, 0f)*playerRotation;
         camRotation = Quaternion.Euler(-mouseY, 0f,0f)*camRotation;
         camRotation = ClampRotationPlayer(camRotation);
-        this.transform.localRotation = playerRotation;
+        // this.transform.localRotation = playerRotation;
+        transform.localRotation = playerRotation * transform.localRotation;
         cam.transform.localRotation = camRotation;
        
     }
