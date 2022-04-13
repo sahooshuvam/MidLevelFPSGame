@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,9 @@ public class PlayerController : MonoBehaviour
     public float playerSpeed;
     public float playerJumpForce;
     public float playerRotationSpeed;
+    public Transform bulletLaunch;
+   
+
     Rigidbody rb;
     CapsuleCollider colliders;
     Quaternion camRotation;
@@ -45,8 +49,9 @@ public class PlayerController : MonoBehaviour
             {
                 //animator.SetBool("IsFiring", !animator.GetBool("IsFiring"));
                 animator.SetTrigger("IsFiring");
+                WhenZombieGotHit();
                 ammo = Mathf.Clamp(ammo - 1, 0, maxAmmo);
-                Debug.Log("Ammo Fire Value: "+ammo);
+                //Debug.Log("Ammo Fire Value: "+ammo);
             }
             else
             {
@@ -62,8 +67,8 @@ public class PlayerController : MonoBehaviour
             
             reloadAmmo += ammoAvailable;
             ammo -= ammoAvailable;
-            Debug.Log("Ammo Loaded Value: "+ammo);
-            Debug.Log("Ammo Reloaded Value: " + reloadAmmo);
+            //Debug.Log("Ammo Loaded Value: "+ammo);
+            //Debug.Log("Ammo Reloaded Value: " + reloadAmmo);
         }
         if(Mathf.Abs(inputX)>0|| Mathf.Abs(inputz)>0)
         {
@@ -76,6 +81,33 @@ public class PlayerController : MonoBehaviour
         }
       
     }
+
+    private void WhenZombieGotHit()
+    {
+        RaycastHit hitInfo;
+        if (Physics.Raycast(bulletLaunch.position,bulletLaunch.forward,out hitInfo,100f))
+        {
+            GameObject hitZombie = hitInfo.collider.gameObject;
+            if (hitZombie.tag == "Zombie")
+            {
+                if (UnityEngine.Random.Range(0, 10) < 5)
+                {
+                    GameObject tempRd = hitZombie.GetComponent<ZombieController>().ragdollPrefab;
+                    GameObject newTempRd = Instantiate(tempRd, hitZombie.transform.position, hitZombie.transform.rotation);
+                    newTempRd.transform.Find("Hips").GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * 10000);
+                    Destroy(hitZombie);
+                }
+                else
+                {
+                    hitZombie.GetComponent<ZombieController>().KillZombie();
+
+                }
+                //    GameObject tempRd = Instantiate(ragdollPrefab, this.transform.position, this.transform.rotation);
+                //    tempRd.transform.Find("Hips").GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * 10000);
+            }
+        }
+    }
+
     private void FixedUpdate()
     {
         inputX = Input.GetAxis("Horizontal") * playerSpeed;
@@ -128,15 +160,15 @@ public class PlayerController : MonoBehaviour
     {
         if(collision.gameObject.tag=="Ammo" && ammo<maxAmmo) 
         {
-            Debug.Log("Collected box");
+           // Debug.Log("Collected box");
             //ammo += 10;
             ammo = Mathf.Clamp(ammo + 10, 0, maxAmmo);
-            Debug.Log("Ammo: " + ammo);
+            //Debug.Log("Ammo: " + ammo);
             collision.gameObject.SetActive(false);
         }
         if(collision.gameObject.tag == "Medical" && medical<maxMedical)
         {
-            Debug.Log("Collected medical box");
+           // Debug.Log("Collected medical box");
             //medical += 10;
             medical = Mathf.Clamp(medical + 10, 0, maxMedical);
             collision.gameObject.SetActive(false);
@@ -145,7 +177,7 @@ public class PlayerController : MonoBehaviour
         {
             // Need to Trigger dead sound , when medical is zero
             medical = Mathf.Clamp(medical - 10, 0, maxMedical);
-            Debug.Log("Medical: "+medical);
+            //Debug.Log("Medical: "+medical);
         }
     }
 }

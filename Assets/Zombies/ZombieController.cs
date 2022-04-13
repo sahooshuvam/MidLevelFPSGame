@@ -3,24 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+
 public class ZombieController : MonoBehaviour
 {
-    Animator anim;
+    public Animator anim;
     public GameObject target;
+    public GameObject ragdollPrefab;
     NavMeshAgent agent;
-    //AudioSource audio;
-    //public List<AudioClip> audioClips;
+   //udioSource audio;
+    public List<AudioClip> audioClips;
     public float walkingSpeed;
     public float runningSpeed;
-    enum STATE { IDLE,WONDER,CHASE,ATTACK,DEAD};
-    STATE state = STATE.IDLE;//default state
+    public enum STATE { IDLE, WONDER, CHASE, ATTACK, DEAD };
+    public STATE state = STATE.IDLE;//default state
     // Start is called before the first frame update
     void Start()
     {
         anim = this.GetComponent<Animator>();
         //anim.SetBool("isWalking", true);
         agent = this.GetComponent<NavMeshAgent>();
-        //audio = this.GetComponent<AudioSource>();
+     // audio = this.GetComponent<AudioSource>();
         //.playOnAwake = audioClips[0];
     }
 
@@ -68,6 +70,13 @@ public class ZombieController : MonoBehaviour
             anim.SetBool("isDead", true);
         }*/
 
+        //if (Input.GetKey(KeyCode.R))
+        //{
+        //    GameObject tempRd= Instantiate(ragdollPrefab, this.transform.position, this.transform.rotation);
+        //    tempRd.transform.Find("Hips").GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * 10000);
+        //    Destroy(this.gameObject);
+        //    return;
+        //}
         if (target == null)
         {
             target = GameObject.FindGameObjectWithTag("Player");
@@ -78,16 +87,21 @@ public class ZombieController : MonoBehaviour
             case STATE.IDLE:
                 if (CanSeePlayer())
                     state = STATE.CHASE;
-                else if (Random.Range(0,1000)<5)
-                    state = STATE.WONDER;           
-            break;
+                else if (Random.Range(0, 1000) < 5)
+                {
+                    state = STATE.WONDER;
+                }
 
-            case STATE.WONDER: 
+
+
+
+                break;
+            case STATE.WONDER:
                 if (!agent.hasPath)
                 {
                     float randValueX = transform.position.x + Random.Range(-5f, 5f);
                     float randValueZ = transform.position.z + Random.Range(-5f, 5f);
-                   float ValueY = Terrain.activeTerrain.SampleHeight(new Vector3(randValueX, 0f, randValueZ));
+                    float ValueY = Terrain.activeTerrain.SampleHeight(new Vector3(randValueX, 0f, randValueZ));
                     Vector3 destination = new Vector3(randValueX, ValueY, randValueZ);
                     agent.SetDestination(destination);
                     agent.stoppingDistance = 0f;
@@ -99,7 +113,7 @@ public class ZombieController : MonoBehaviour
                 {
                     state = STATE.CHASE;
                 }
-                else if (Random.Range(0,1000) <7)
+                else if (Random.Range(0, 1000) < 7)
                 {
                     state = STATE.IDLE;
                     TurnOffAllTriggerAnim();
@@ -108,7 +122,8 @@ public class ZombieController : MonoBehaviour
 
                 break;
 
-            case STATE.CHASE: agent.SetDestination(target.transform.position);
+            case STATE.CHASE:
+                agent.SetDestination(target.transform.position);
                 agent.stoppingDistance = 2f;
                 TurnOffAllTriggerAnim();
                 anim.SetBool("isRunning", true);
@@ -117,19 +132,19 @@ public class ZombieController : MonoBehaviour
                 {
                     state = STATE.ATTACK;
                 }
-                if (CannotSeePlayer() )
+                if (CannotSeePlayer())
                 {
                     state = STATE.WONDER;
                     agent.ResetPath();
                 }
-                
+
                 break;
 
             case STATE.ATTACK:
                 TurnOffAllTriggerAnim();
                 anim.SetBool("isAttacking", true);
                 transform.LookAt(target.transform.position);//Zombies should look at Player
-                if (DistanceToPlayer()>agent.stoppingDistance + 2)
+                if (DistanceToPlayer() > agent.stoppingDistance + 2)
                 {
                     state = STATE.CHASE;
                 }
@@ -137,10 +152,14 @@ public class ZombieController : MonoBehaviour
                 break;
 
             case STATE.DEAD:
+                
+                //GameObject tempRd = Instantiate(ragdollPrefab, this.transform.position, this.transform.rotation);
+                //tempRd.transform.Find("Hips").GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * 10000);
+                //Destroy(this.gameObject);
                 break;
 
             default:
-                break; 
+                break;
         }
     }
     public void TurnOffAllTriggerAnim()//All animation are off
@@ -153,7 +172,7 @@ public class ZombieController : MonoBehaviour
 
     public bool CanSeePlayer()
     {
-        if (DistanceToPlayer()<10)
+        if (DistanceToPlayer() < 10)
         {
             return true;
         }
@@ -176,5 +195,12 @@ public class ZombieController : MonoBehaviour
         }
         else
             return false;
+    }
+
+    public void KillZombie()
+    {
+        TurnOffAllTriggerAnim();
+        anim.SetBool("isDead",true);
+        state = STATE.DEAD;
     }
 }
