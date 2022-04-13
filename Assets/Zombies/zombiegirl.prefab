@@ -2239,11 +2239,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 1283619454140908857, guid: 9769b18f08f9e214e89818254dcedb9c, type: 3}
-  audioClips:
-  - {fileID: 8300000, guid: fb6e0eed58a13a344b82f8550c3558a9, type: 3}
-  - {fileID: 8300000, guid: 319eefc4d0924c147ac6f26f9bc1d4fc, type: 3}
-  walkingSpeed: 0
-  runningSpeed: 0
+  walkingSpeed: 2
+  runningSpeed: 4
 --- !u!195 &5562134664450449943
 NavMeshAgent:
   m_ObjectHideFlags: 0

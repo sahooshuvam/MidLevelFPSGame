@@ -10,6 +10,7 @@ public class SpawnManager : MonoBehaviour
     public int number;
     public float spawnRadius;
     public bool spawnOnStart = true;
+    Vector3 result;
    
     // Start is called before the first frame update
     void Start()
@@ -25,12 +26,15 @@ public class SpawnManager : MonoBehaviour
     {
         for (int i = 0; i < number; i++)
         {
-
+            //print("Transform.position = "  +transform.position);
             Vector3 randomPoint = transform.position + Random.insideUnitSphere * spawnRadius;
+            //print("Random point = " +randomPoint);
             NavMeshHit hit;
             if (NavMesh.SamplePosition(randomPoint, out hit, 10f, NavMesh.AllAreas))
             {
-                Instantiate(zombiePrefabs[0], randomPoint, Quaternion.identity);
+                result = hit.position;
+                print("Result=" +result);
+                Instantiate(zombiePrefabs[0], result, Quaternion.identity);
             }
             else
                 i--;

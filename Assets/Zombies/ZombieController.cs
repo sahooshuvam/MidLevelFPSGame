@@ -8,8 +8,8 @@ public class ZombieController : MonoBehaviour
     Animator anim;
     public GameObject target;
     NavMeshAgent agent;
-    AudioSource audio;
-    public List<AudioClip> audioClips;
+    //AudioSource audio;
+    //public List<AudioClip> audioClips;
     public float walkingSpeed;
     public float runningSpeed;
     enum STATE { IDLE,WONDER,CHASE,ATTACK,DEAD};
@@ -20,7 +20,7 @@ public class ZombieController : MonoBehaviour
         anim = this.GetComponent<Animator>();
         //anim.SetBool("isWalking", true);
         agent = this.GetComponent<NavMeshAgent>();
-        audio = this.GetComponent<AudioSource>();
+        //audio = this.GetComponent<AudioSource>();
         //.playOnAwake = audioClips[0];
     }
 
@@ -79,20 +79,15 @@ public class ZombieController : MonoBehaviour
                 if (CanSeePlayer())
                     state = STATE.CHASE;
                 else if (Random.Range(0,1000)<5)
-                {
-                    state = STATE.WONDER;
-                }
-                    
-               
-                
-                              
-                break;
+                    state = STATE.WONDER;           
+            break;
+
             case STATE.WONDER: 
                 if (!agent.hasPath)
                 {
                     float randValueX = transform.position.x + Random.Range(-5f, 5f);
                     float randValueZ = transform.position.z + Random.Range(-5f, 5f);
-                    float ValueY = Terrain.activeTerrain.SampleHeight(new Vector3(randValueX, 0f, randValueZ));
+                   float ValueY = Terrain.activeTerrain.SampleHeight(new Vector3(randValueX, 0f, randValueZ));
                     Vector3 destination = new Vector3(randValueX, ValueY, randValueZ);
                     agent.SetDestination(destination);
                     agent.stoppingDistance = 0f;
