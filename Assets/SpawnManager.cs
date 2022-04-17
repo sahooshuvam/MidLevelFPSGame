@@ -34,7 +34,7 @@ public class SpawnManager : MonoBehaviour
             {
                 result = hit.position;
                 //print("Result=" +result);
-                Instantiate(zombiePrefabs[0], randomPoint, Quaternion.identity);
+                Instantiate(zombiePrefabs[0], result, Quaternion.identity);
             }
             else
                 i--;

@@ -77,7 +77,7 @@ public class ZombieController : MonoBehaviour
         //    Destroy(this.gameObject);
         //    return;
         //}
-        if (target == null)
+        if (target == null && GameStart.isGameOver == false)
         {
             target = GameObject.FindGameObjectWithTag("Player");
             return;
@@ -123,6 +123,12 @@ public class ZombieController : MonoBehaviour
                 break;
 
             case STATE.CHASE:
+                if (GameStart.isGameOver )
+                {
+                    TurnOffAllTriggerAnim();
+                    state = STATE.WONDER;
+                    return;
+                }
                 agent.SetDestination(target.transform.position);
                 agent.stoppingDistance = 2f;
                 TurnOffAllTriggerAnim();
@@ -141,6 +147,12 @@ public class ZombieController : MonoBehaviour
                 break;
 
             case STATE.ATTACK:
+                if (GameStart.isGameOver)
+                {
+                    TurnOffAllTriggerAnim();
+                    state = STATE.WONDER;
+                    return;
+                }
                 TurnOffAllTriggerAnim();
                 anim.SetBool("isAttacking", true);
                 transform.LookAt(target.transform.position);//Zombies should look at Player
@@ -155,7 +167,8 @@ public class ZombieController : MonoBehaviour
                 
                 //GameObject tempRd = Instantiate(ragdollPrefab, this.transform.position, this.transform.rotation);
                 //tempRd.transform.Find("Hips").GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * 10000);
-                //Destroy(this.gameObject);
+                Destroy(agent);
+                this.GetComponent<SinkToGround>().ReadyToSink();
                 break;
 
             default:
@@ -184,7 +197,13 @@ public class ZombieController : MonoBehaviour
 
     private float DistanceToPlayer()
     {
-        return Vector3.Distance(target.transform.position, this.transform.position);
+        if (GameStart.isGameOver)
+        {
+            return Mathf.Infinity;
+
+        }
+            return Vector3.Distance(target.transform.position, this.transform.position);
+        
     }
 
     public bool CannotSeePlayer()
@@ -203,4 +222,21 @@ public class ZombieController : MonoBehaviour
         anim.SetBool("isDead",true);
         state = STATE.DEAD;
     }
+
+    int damageAmount = 5;
+    public void DamagePlayer()
+    {
+        if (target!=null)
+        {
+            target.GetComponent<PlayerController>().TakeHit(damageAmount);//create a method Random sound when player takes damage
+        }
+
+       
+
+    }
+}
+
+public class GameStart
+{
+    public static bool isGameOver = false;
 }

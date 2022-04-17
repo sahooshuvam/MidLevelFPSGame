@@ -10,8 +10,7 @@ public class PlayerController : MonoBehaviour
     public float playerJumpForce;
     public float playerRotationSpeed;
     public Transform bulletLaunch;
-   
-
+    public GameObject steveModelPrefabs;
     Rigidbody rb;
     CapsuleCollider colliders;
     Quaternion camRotation;
@@ -28,10 +27,16 @@ public class PlayerController : MonoBehaviour
     int maxMedical = 100;
     int reloadAmmo = 0;
     int maxReloadAmmo = 10;
+    int zombieDeathCount;
+
+    public GameObject stevePrefeb;
+    SpawnManager spawnManager;
+    
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         colliders = GetComponent<CapsuleCollider>();
+        spawnManager = GameObject.Find("SpawnPosition").GetComponent<SpawnManager>();
         //animator = GetComponent<Animator>();
         //audioSource = GetComponent<AudioSource>();
     }
@@ -90,6 +95,7 @@ public class PlayerController : MonoBehaviour
             GameObject hitZombie = hitInfo.collider.gameObject;
             if (hitZombie.tag == "Zombie")
             {
+                zombieDeathCount++;
                 if (UnityEngine.Random.Range(0, 10) < 5)
                 {
                     GameObject tempRd = hitZombie.GetComponent<ZombieController>().ragdollPrefab;
@@ -102,10 +108,23 @@ public class PlayerController : MonoBehaviour
                     hitZombie.GetComponent<ZombieController>().KillZombie();
 
                 }
+
+                if (zombieDeathCount == spawnManager.number)
+                {
+                    PlayerWinDanceMethod();
+                }
                 //    GameObject tempRd = Instantiate(ragdollPrefab, this.transform.position, this.transform.rotation);
                 //    tempRd.transform.Find("Hips").GetComponent<Rigidbody>().AddForce(Camera.main.transform.forward * 10000);
             }
         }
+    }
+
+    private void PlayerWinDanceMethod()
+    {
+        Vector3 position = new Vector3(transform.position.x, Terrain.activeTerrain.SampleHeight(this.transform.position), transform.position.z);
+        GameObject tempSteve = Instantiate(stevePrefeb, position, this.transform.rotation);
+        tempSteve.GetComponent<Animator>().SetTrigger("Dance");
+        Destroy(this.gameObject);
     }
 
     private void FixedUpdate()
@@ -180,5 +199,24 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("Medical: "+medical);
         }
     }
+
+    public void TakeHit(float value)
+    {
+      
+         medical = (int)(Mathf.Clamp(medical-value,0,maxMedical));// medical = health
+        print("Health " +medical);//
+        if (medical <=0)
+        {
+            Vector3 position = new Vector3(transform.position.x,Terrain.activeTerrain.SampleHeight(this.transform.position),transform.position.z);
+            GameObject tempSteve = Instantiate(steveModelPrefabs, position, this.transform.rotation);
+            tempSteve.GetComponent<Animator>().SetTrigger("Death");
+            GameStart.isGameOver = true;
+            Destroy(this.gameObject);
+        }
+       
+    }
+
 }
+
+
 
